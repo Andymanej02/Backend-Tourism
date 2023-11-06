@@ -4,7 +4,9 @@
   "description": "es una api de empleados",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --coverage --verbose --runInBand --detectOpenHandles --force-exit",
+    "sonar": "sonar-scanner"
   },
   "author": "Amilkar Hernandez",
   "license": "ISC",
@@ -18,6 +20,7 @@
     "mongoose": "^7.5.2"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1"
   }
 }
