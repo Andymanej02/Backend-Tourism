@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const ServiceSchema = Schema({
-    nombres: String,
-    id: String,
-    precio: String,
-    informacion: String,
-    imagen: String,
+const serviceSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: String, required: true },
+    // Otros campos relacionados con un servicio
 });
 
-ServiceSchema.methods.setImgUrl = function setImgUrl () {
-    
-}
-module.exports = mongoose.model('servicios_collection', ServiceSchema);
+const Service = mongoose.model('Service', serviceSchema);
+
+module.exports = Service;

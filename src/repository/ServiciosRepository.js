@@ -1,124 +1,60 @@
-const {Response} = require("../utils/Response"); 
-const ServiciosModels = require("../models/ServiciosModels");
+const Service = require('./ServiciosModels');
 
-module.exports.CreateServicios = async (user) =>{
-    return new Promise((resolve, reject) => {
-        user
-        .save()
-        .then((resp)=>{
-            Response.status = 201;
-            Response.message = "Se ha creado el Usuario Correctamente";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
+class ServiceRepository {
+    async findAllServices() {
+        try {
+            const services = await Service.find();
+            return services;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async findServiceById(serviceId) {
+        try {
+            const service = await Service.findById(serviceId);
+            if (!service) {
+                throw new Error('Service not found');
+            }
+            return service;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async createService(serviceData) {
+        try {
+            const newService = new Service(serviceData);
+            const createdService = await newService.save();
+            return createdService;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateService(serviceId, serviceData) {
+        try {
+            const updatedService = await Service.findByIdAndUpdate(serviceId, serviceData, { new: true });
+            if (!updatedService) {
+                throw new Error('Service not found');
+            }
+            return updatedService;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async deleteService(serviceId) {
+        try {
+            const deletedService = await Service.findByIdAndRemove(serviceId);
+            if (!deletedService) {
+                throw new Error('Service not found');
+            }
+            return deletedService;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
-module.exports.FindAllServicios = async (sort) =>{
-    return new Promise((resolve, reject) => {
-        ServiciosModels
-        .find()
-        .sort(sort)
-        .then((resp)=>{
-            Response.status = 200;
-            Response.message = "Registros Encontrados";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
-}
-
-module.exports.FindOneServicios = async (id) =>{
-    return new Promise((resolve, reject) => {
-        ServiciosModels
-        .findById({_id: id})
-        .then((resp)=>{
-            Response.status = 200;
-            Response.message = "Registros Encontrados";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
-}
-
-module.exports.FindOneUsername = async (usuario) =>{
-    return new Promise((resolve, reject) => {
-        ServiciosModels
-        .findOne({usuario: usuario})
-        .then((resp)=>{
-            Response.status = 200;
-            Response.message = "Registros Encontrados";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
-}
-
-module.exports.deleteServicios = async (id) =>{
-    return new Promise((resolve, reject) => {
-        ServiciosModels
-        .findByIdAndDelete(id)
-        .then((resp)=>{
-            Response.status = 200;
-            Response.message = "Registro Eliminado correctamente";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
-}
-
-
-module.exports.updateServicios = async (id, user) =>{
-    return new Promise((resolve, reject) => {
-        ServiciosModels
-        .findOneAndUpdate({_id : id}, {nombres: user.nombres, apellidos: user.apellidos})
-        .then((resp)=>{
-            Response.status = 200;
-            Response.message = "Registro Actualizado correctamente";
-            Response.result = resp;
-            resolve(Response);
-        })
-        .catch((err) =>{
-            console.log("error:", err)
-            Response.status = 500;
-            Response.message = "Ocurrio un error en el servidor";
-            Response.result = err;
-            reject(Response);
-        })
-    });
-}
+module.exports = new ServiceRepository();
