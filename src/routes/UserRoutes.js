@@ -1,22 +1,15 @@
-//Librerias
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-//Routes
-const UsuariosRoutes = require("./src/routes/UserRoutes"); 
-const UsuarioModel = require("./src/models/UsuarioModel"); // Importar el modelo
-const UsuarioRepository = require("./src/repositories/UsuarioRepository"); // Importar el repositorio
-const UsuarioController = require("./src/controllers/UsuarioController"); // Importar el controlador
-
 const app = express();
 
-//Datos codificados en URL
+// Datos codificados en URL
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Analiza objeto JSON
+// Analiza objeto JSON
 app.use(bodyParser.json());
 
 app.use(
@@ -32,8 +25,8 @@ app.get('/status', (req, res) => {
     })
 });
 
-//Conexion a la base de datos
-let MONGODB_URI = `mongodb://${process.env.BD_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.MONGO_DB}?retryWrites=true&authSource=admin`;
+// Conexion a la base de datos
+const MONGODB_URI = `mongodb://${process.env.BD_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.MONGO_DB}?retryWrites=true&authSource=admin`;
 
 mongoose
   .connect(MONGODB_URI, {
@@ -48,21 +41,24 @@ mongoose
     throw err;
   });
 
+// Prefijo para las rutas de usuarios
+const userApiPrefix = '/api/usuarios';
+
 // Rutas CRUD de Usuarios
-app.get('/api/usuarios', UsuarioController.getAllUsers);
-app.get('/api/usuarios/:id', UsuarioController.getUserById);
-app.post('/api/usuarios', UsuarioController.createUser);
-app.delete('/api/usuarios/:id', UsuarioController.deleteUser);
-app.put('/api/usuarios/:id', UsuarioController.updateUser);
+app.get(`${userApiPrefix}`, UsuarioController.getAllUsers);
+app.get(`${userApiPrefix}/:id`, UsuarioController.getUserById);
+app.post(`${userApiPrefix}`, UsuarioController.createUser);
+app.delete(`${userApiPrefix}/:id`, UsuarioController.deleteUser);
+app.put(`${userApiPrefix}/:id`, UsuarioController.updateUser);
 
 // Rutas existentes
-app.post("/api/usuarios/login", UsersController.login);
-app.post("/api/usuarios/create", UsersController.create);
-app.get("/api/usuarios/listar", UsersController.findAll);
-app.get("/api/usuarios/findbyid/:id", UsersController.findById);
-app.get("/api/usuarios/findusername/:username", UsersController.findOneUsuario);
-app.delete("/api/usuarios/delete/:id", UsersController.deleteUserData);
-app.put("/api/usuarios/update/:id", UsersController.updateUserData);
+app.post(`${userApiPrefix}/login`, UsersController.login);
+app.post(`${userApiPrefix}/create`, UsersController.create);
+app.get(`${userApiPrefix}/listar`, UsersController.findAll);
+app.get(`${userApiPrefix}/findbyid/:id`, UsersController.findById);
+app.get(`${userApiPrefix}/findusername/:username`, UsersController.findOneUsuario);
+app.delete(`${userApiPrefix}/delete/:id`, UsersController.deleteUserData);
+app.put(`${userApiPrefix}/update/:id`, UsersController.updateUserData);
 
 // Exportar
 module.exports = app;
