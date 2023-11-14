@@ -1,36 +1,24 @@
-# Estapa de construcción node en el contenedor
-FROM node:latest as build
+# pull the Node.js Docker image
+FROM node:latest
 
-#Crear un directorio y ubicarme dentro de él
-WORKDIR /app
+# create the directory inside the container
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-#Copia todas las dependencias
-COPY package.json ./
+WORKDIR /home/node/app
 
-#Copia todas las dependencias
-COPY package-lock.json .
+# copy the package.json files from local machine to the workdir in container
+COPY --chown=node:node package*.json ./
 
-#Ejecutar este comando, cuando ya tenga en package.json: 
-#decirle al contenedror que lo instale cuando se desgargue de git
+# run npm install in our local machine
 RUN npm install
 
-#Copia todo: src, public, asset. Lo pone todo en la carpeta app
-COPY . .
+# copy the generated modules and all other files to the container
+COPY --chown=node:node . .
 
-#Compilar la aplicación
-RUN npm run build
+USER node
 
-#Servidor web, sirve paginas
-FROM nginx:alpine
-
-RUN rm -rf /etc/nginx/conf.d/*
-
-COPY --from=build /app/dist /usr/share/nginx/html
-
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-
-#Debe ser el mismo con el de nginx
+# our app is running on port 3000 within the container, so need to expose it
 EXPOSE 3276
 
-
-CMD ["nginx","-g","daemon off;"]
+# the command that starts our app
+ENTRYPOINT [ "node", "index.js" ]

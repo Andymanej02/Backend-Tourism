@@ -1,8 +1,8 @@
 version: '3.9'
 services:
-  energy: 
+  turism: 
     container_name: turism-back
     build: 
       context: ./
     ports:
-      -3276-3276
+      - 3276:3276
