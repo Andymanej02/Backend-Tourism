@@ -1,4 +1,3 @@
-
 //Librerias
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -8,13 +7,16 @@ require("dotenv").config();
 
 //Routes
 const UsuariosRoutes = require("./src/routes/UserRoutes"); 
+const UsuarioModel = require("./src/models/UsuarioModel"); // Importar el modelo
+const UsuarioRepository = require("./src/repositories/UsuarioRepository"); // Importar el repositorio
+const UsuarioController = require("./src/controllers/UsuarioController"); // Importar el controlador
 
 const app = express();
 
-//Datos codifcados en URL
+//Datos codificados en URL
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Analiza objeto Json
+//Analiza objeto JSON
 app.use(bodyParser.json());
 
 app.use(
@@ -30,8 +32,7 @@ app.get('/status', (req, res) => {
     })
 });
 
-
-//Conexion a base de datos
+//Conexion a la base de datos
 let MONGODB_URI = `mongodb://${process.env.BD_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.MONGO_DB}?retryWrites=true&authSource=admin`;
 
 mongoose
@@ -47,8 +48,12 @@ mongoose
     throw err;
   });
 
-//Setting Routes
-app.use("/api", UsuariosRoutes)  
+// Rutas CRUD de Usuarios
+app.get('/api/usuarios', UsuarioController.getAllUsers);
+app.get('/api/usuarios/:id', UsuarioController.getUserById);
+app.post('/api/usuarios', UsuarioController.createUser);
+app.delete('/api/usuarios/:id', UsuarioController.deleteUser);
+app.put('/api/usuarios/:id', UsuarioController.updateUser);
 
-//Export
+// Exportar
 module.exports = app;
